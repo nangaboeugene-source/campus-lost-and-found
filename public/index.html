@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Lost & Found</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Campus Lost & Found Portal</h1>
+    </header>
+
+    <main>
+        <section class="form-section">
+            <h2>Report an Item</h2>
+            <form id="itemForm">
+                <input type="text" id="title" placeholder="Item Name (e.g., Blue HP Laptop)" required>
+                <select id="type" required>
+                    <option value="Lost">Lost</option>
+                    <option value="Found">Found</option>
+                </select>
+                <select id="category">
+                    <option value="Electronics">Electronics</option>
+                    <option value="ID / Cards">ID / Cards</option>
+                    <option value="Books / Notes">Books / Notes</option>
+                    <option value="Other">Other</option>
+                </select>
+                <input type="text" id="location" placeholder="Location (e.g., Main Library 2nd Floor)" required>
+                <textarea id="description" placeholder="Distinguishing details..."></textarea>
+                <button type="submit">Submit Report</button>
+            </form>
+        </section>
+
+        <section class="list-section">
+            <h2>Reported Items</h2>
+            <input type="text" id="searchInput" placeholder="Search by name or location...">
+            <div id="itemsContainer"></div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>

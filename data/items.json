@@ -1,0 +1,70 @@
+const express = require('express');
+const fs = require('fs');
+const path = require('path');
+
+const app = express();
+const PORT = 3000;
+const DATA_FILE = path.join(__dirname, 'data', 'items.json');
+
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
+
+const readItems = () => {
+    if (!fs.existsSync(DATA_FILE)) return [];
+    const rawData = fs.readFileSync(DATA_FILE);
+    return JSON.parse(rawData);
+};
+
+const writeItems = (items) => {
+    fs.writeFileSync(DATA_FILE, JSON.stringify(items, null, 2));
+};
+
+app.get('/api/items', (req, res) => {
+    const items = readItems();
+    res.json(items);
+});
+
+app.post('/api/items', (req, res) => {
+    const { title, category, location, type, description } = req.body;
+    if (!title || !location || !type) {
+        return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const items = readItems();
+    const newItem = {
+        id: Date.now().toString(),
+        title,
+        category: category || 'General',
+        location,
+        type,
+        description: description || '',
+        status: 'Unclaimed',
+        claimNote: null,
+        date: new Date().toLocaleDateString()
+    };
+
+    items.unshift(newItem);
+    writeItems(items);
+    res.status(201).json(newItem);
+});
+
+app.patch('/api/items/:id/claim', (req, res) => {
+    const { id } = req.params;
+    const { verificationNote } = req.body;
+    const items = readItems();
+    const itemIndex = items.findIndex(item => item.id === id);
+
+    if (itemIndex === -1) {
+        return res.status(404).json({ error: 'Item not found' });
+    }
+
+    items[itemIndex].status = 'Claimed';
+    items[itemIndex].claimNote = verificationNote;
+    writeItems(items);
+
+    res.json(items[itemIndex]);
+});
+
+app.listen(PORT, () => {
+    console.log('Server running at http://localhost:${PORT}'');
+});
